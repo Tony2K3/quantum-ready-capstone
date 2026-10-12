@@ -69,7 +69,7 @@ NA
 - Defined in Clickup
 
 **Russell:**
-- [Russell – Add completed issues and links]
+- Defined in Clickup
 
 ## Incomplete Issues/User Stories
 
