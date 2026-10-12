@@ -24,6 +24,7 @@
 
 
 **Russell – Connector & Integration**
+
 - Built the MCP connector for BlueDolphin and LeanIX, mapping their data into the qros topology schema.
 -Built the chat bot backend. It’s fully functional and only needs an LLM connection.
 -Built a rough chat front end for interacting with the assistant.
@@ -40,6 +41,7 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 I delivered the core pipeline for the Decision Cortex roadmap generator for this sprint. All input and output data contracts were defined as validated Pydantic models covering enterprise architecture ingestion, priority scoring, and roadmap output. TypeSafe AI’s Jev model was used for per-application quantum priority scoring across five independent dimensions, with applications scored concurrently and mapped to ranked priority objects. A persona based prompt assembly layer was built supporting EA, CTO, and CISO definitions, with Anthropic Claude handling structured roadmap generation backed by schema validation and retry logic. The full pipeline runs end-to-end from enterprise architecture input to a validated roadmap output. Supporting documentation was produced covering the prompt strategy, deterministic vs. LLM responsibilities, and a formal chat context contract defining the MCP tool interface for downstream integration.
 
 **Russell:**
+
 During sprint 1 I made the chat bot backend and rough front end and did  the entirety of the mcp connector. I followed the technical instructions down to a tee. Went pass the sprint requirements for both, the chat bot backend is fully functional and all it needs is a llm connection. The mcp is fully done and tested without api connections as I dont have access to leanix and bluedolphin api keys of my own.
 [Russell – Add your work summary here]
 
@@ -52,6 +54,7 @@ During sprint 1 I made the chat bot backend and rough front end and did  the ent
 - All Sprint 1 responsibilities were completed.
 
 **Russell:**
+
 NA
 
 ## Completed Issues/User Stories
@@ -135,6 +138,7 @@ NA
 - Created an end-to-end pipeline to generate an AI powered roadmap that does not make up information.
 
 **Russell:**
+
 -Finished both the MCP connector and the chat backend, going past the Sprint 1 requirements.
 -Followed the technical spec closely, so the connector output fits the existing topology schema.
 -Got the connector fully tested even without real API access.
@@ -150,6 +154,7 @@ NA
 - Implement a more robust data intake system to handle different MCP connectors.
 
 **Russell:**
+
 -Get access to LeanIX and BlueDolphin API keys or sandboxes so the connector can be tested against real data.
 -Connect the chat backend to an LLM and test it with real queries.
 -Clean up and improve the chat front end.
@@ -168,6 +173,7 @@ NA
 - EAM input handling​
 
 **Russell:**
+
 - MCP framework
 - blue dolphin and leanix connection
   **most of this is already done for the mcp so i will be making it better/testing**
