@@ -6,7 +6,7 @@
 
 ## YouTube Link of Sprint 1 Video
 
-[Add unlisted YouTube video link]
+[Sprint 1 Demo](https://youtu.be/JhEtz4HdF04)
 
 ## What's New (User Facing)
 
