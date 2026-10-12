@@ -1,0 +1,29 @@
+source,relationship,from_id,from_name,from_type,to_id,to_name,to_type,source_relationship
+bluedolphin,uses_data,bd:app-1,Order Service,application,bd:do-1,Customer Record,data_object,Access
+bluedolphin,runs_on,bd:app-1,Order Service,application,bd:tc-1,PostgreSQL 14,it_component,Realization
+bluedolphin,supports,bd:app-1,Order Service,application,bd:cap-1,Order Management,business_capability,Realization
+bluedolphin,connects_interface,bd:app-1,Order Service,application,bd:if-1,Order to Payments API,interface,Assignment
+bluedolphin,depends_on,bd:app-1,Order Service,application,bd:app-2,Payments Gateway,application,Serving
+bluedolphin,uses_data,bd:app-2,Payments Gateway,application,bd:do-2,Payment Transaction,data_object,Access
+bluedolphin,runs_on,bd:app-2,Payments Gateway,application,bd:tc-2,Windows Server 2016,it_component,Realization
+bluedolphin,supports,bd:app-2,Payments Gateway,application,bd:cap-2,Payment Processing,business_capability,Realization
+bluedolphin,depends_on,bd:app-3,Customer Portal,application,bd:app-1,Order Service,application,Flow
+bluedolphin,uses_data,bd:app-3,Customer Portal,application,bd:do-1,Customer Record,data_object,Access
+bluedolphin,depends_on,bd:app-1,Order Service,application,bd:app-4,Inventory API,application,Serving
+bluedolphin,runs_on,bd:app-4,Inventory API,application,bd:tc-1,PostgreSQL 14,it_component,Realization
+bluedolphin,connects_interface,bd:app-2,Payments Gateway,application,bd:if-1,Order to Payments API,interface,Serving
+bluedolphin,carries_data,bd:if-1,Order to Payments API,interface,bd:do-2,Payment Transaction,data_object,Access
+leanix,depends_on,lx:lx-app-1,HR Portal,application,lx:lx-app-2,Identity Provider,application,relToRequires
+leanix,uses_data,lx:lx-app-1,HR Portal,application,lx:lx-do-1,Employee Record,data_object,relApplicationToDataObject
+leanix,supports,lx:lx-app-1,HR Portal,application,lx:lx-cap-1,Workforce Management,business_capability,relApplicationToBusinessCapability
+leanix,consumes_interface,lx:lx-app-1,HR Portal,application,lx:lx-if-1,SSO Login (SAML),interface,relConsumerApplicationToInterface
+leanix,runs_on,lx:lx-app-2,Identity Provider,application,lx:lx-tc-1,Red Hat Enterprise Linux 8,it_component,relApplicationToITComponent
+leanix,supports,lx:lx-app-2,Identity Provider,application,lx:lx-cap-2,Identity & Access Management,business_capability,relApplicationToBusinessCapability
+leanix,provides_interface,lx:lx-app-2,Identity Provider,application,lx:lx-if-1,SSO Login (SAML),interface,relProviderApplicationToInterface
+leanix,depends_on,lx:lx-app-3,Legacy Payroll,application,lx:lx-app-2,Identity Provider,application,relToRequires
+leanix,uses_data,lx:lx-app-3,Legacy Payroll,application,lx:lx-do-1,Employee Record,data_object,relApplicationToDataObject
+leanix,uses_data,lx:lx-app-3,Legacy Payroll,application,lx:lx-do-2,Payroll Run,data_object,relApplicationToDataObject
+leanix,runs_on,lx:lx-app-3,Legacy Payroll,application,lx:lx-tc-2,IBM z/OS 2.4,it_component,relApplicationToITComponent
+leanix,carries_data,lx:lx-if-1,SSO Login (SAML),interface,lx:lx-do-1,Employee Record,data_object,relInterfaceToDataObject
+leanix,supplied_by,lx:lx-tc-1,Red Hat Enterprise Linux 8,it_component,lx:lx-prov-1,Red Hat,provider,relITComponentToProvider
+leanix,supplied_by,lx:lx-tc-2,IBM z/OS 2.4,it_component,lx:lx-prov-2,IBM,provider,relITComponentToProvider

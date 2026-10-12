@@ -1,0 +1,5 @@
+id,source,name,category,lifecycle,end_of_life,vendor,used_by_apps,description,other_properties
+bd:tc-1,bluedolphin,PostgreSQL 14,Database,,2026-11-12,PostgreSQL Global Development Group,Inventory API; Order Service,,{}
+bd:tc-2,bluedolphin,Windows Server 2016,Operating system,,2027-01-12,Microsoft,Payments Gateway,,{}
+lx:lx-tc-2,leanix,IBM z/OS 2.4,operatingSystem,phaseOut,2026-09-30,IBM,Legacy Payroll,,{}
+lx:lx-tc-1,leanix,Red Hat Enterprise Linux 8,operatingSystem,active,2029-05-31,Red Hat,Identity Provider,,{}

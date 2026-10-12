@@ -1,0 +1,6 @@
+source,from_id,from_name,depends_on_id,depends_on_name,from_type,source_relationship
+bluedolphin,bd:app-1,Order Service,bd:app-2,Payments Gateway,application,Serving
+bluedolphin,bd:app-3,Customer Portal,bd:app-1,Order Service,application,Flow
+bluedolphin,bd:app-1,Order Service,bd:app-4,Inventory API,application,Serving
+leanix,lx:lx-app-1,HR Portal,lx:lx-app-2,Identity Provider,application,relToRequires
+leanix,lx:lx-app-3,Legacy Payroll,lx:lx-app-2,Identity Provider,application,relToRequires

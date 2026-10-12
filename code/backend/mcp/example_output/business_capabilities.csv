@@ -1,0 +1,5 @@
+id,source,name,supported_by_apps,description,other_properties
+bd:cap-1,bluedolphin,Order Management,Order Service,,{}
+bd:cap-2,bluedolphin,Payment Processing,Payments Gateway,,{}
+lx:lx-cap-2,leanix,Identity & Access Management,Identity Provider,,{}
+lx:lx-cap-1,leanix,Workforce Management,HR Portal,,{}
