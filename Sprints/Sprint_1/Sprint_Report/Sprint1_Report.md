@@ -82,12 +82,6 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 - [test_engine.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/simulator/test_engine.py) – Validates simulation behavior, topology preservation, and assessment results.
 - [test_relationships.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/simulator/test_relationships.py) – Validates topology relationship handling and dependency identification.
 
-- https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/simulator/demo.py
-- https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/simulator/relationships.py
-- https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/simulator/README.md
-- https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/simulator/test_engine.py
-- https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/simulator/test_relationships.py
-
 **Peter:**
 - [Peter – Add code files and GitHub links]
 
