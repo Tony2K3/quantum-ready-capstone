@@ -1,0 +1,3 @@
+id,source,name,provider_apps,consumer_apps,connected_apps,data_carried,protocols,lifecycle,description,other_properties
+bd:if-1,bluedolphin,Order to Payments API,,,Order Service; Payments Gateway,Payment Transaction,HTTPS,,REST call to authorize and capture payments,{}
+lx:lx-if-1,leanix,SSO Login (SAML),Identity Provider,HR Portal,,Employee Record,SAML over HTTPS,active,Authentication hand-off,{}

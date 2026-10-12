@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantum Ready Assistant</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=cabinet-grotesk@500,700&display=swap" rel="stylesheet">
+<script>
+  // Apply the saved or system theme before first paint
+  try { document.documentElement.dataset.theme = localStorage.getItem('qr-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+  catch { document.documentElement.dataset.theme = 'light'; }
+</script>
+<style>
+  :root {
+    --font-display: "Cabinet Grotesk", "Inter", system-ui, sans-serif;
+    --font-body: "Satoshi", "Inter", system-ui, sans-serif;
+    --radius-md: .5rem; --radius-lg: .75rem; --radius-xl: 1rem;
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+    --transition: 180ms var(--ease-out);
+  }
+  :root, [data-theme="light"] {
+    --bg: #f4f2ec; --surface: #fbfaf6; --surface-2: #f0eee6; --surface-3: #e8e4da;
+    --text: #191b18; --muted: #666861; --faint: #9c9d96;
+    --border: rgba(37, 40, 35, .12); --border-strong: rgba(37, 40, 35, .2);
+    --primary: #0d6f73; --primary-strong: #074d50; --primary-soft: #d8ebe8; --on-primary: #fff;
+    --danger: #9e3447;
+    --shadow: 0 20px 50px rgba(31, 35, 32, .12); --shadow-soft: 0 8px 28px rgba(31, 35, 32, .08);
+    color-scheme: light;
+  }
+  [data-theme="dark"] {
+    --bg: #0f1211; --surface: #171b19; --surface-2: #202623; --surface-3: #2b332f;
+    --text: #ecebe4; --muted: #a8aaa1; --faint: #6f746c;
+    --border: rgba(236, 235, 228, .12); --border-strong: rgba(236, 235, 228, .22);
+    --primary: #6db5af; --primary-strong: #9bd7d1; --primary-soft: #203936; --on-primary: #0f1211;
+    --danger: #d97786;
+    --shadow: 0 24px 60px rgba(0, 0, 0, .4); --shadow-soft: 0 10px 36px rgba(0, 0, 0, .3);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; display: flex; height: 100vh; height: 100dvh; overflow: hidden;
+    font: 16px/1.55 var(--font-body); color: var(--text); -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(circle at 18% 12%, color-mix(in oklab, var(--primary) 10%, transparent), transparent 28%),
+      linear-gradient(145deg, var(--bg), color-mix(in oklab, var(--bg) 88%, var(--surface-3)));
+  }
+  button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition), opacity var(--transition); }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+  .mark { display: grid; place-items: center; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); color: var(--primary-strong); background: color-mix(in oklab, var(--primary-soft) 55%, transparent); flex-shrink: 0; }
+  .mark path, .mark circle { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .eyebrow { margin: 0; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+
+  /* Sidebar */
+  aside {
+    width: 284px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; padding: 20px 16px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, color-mix(in oklab, var(--surface) 90%, transparent), color-mix(in oklab, var(--surface-2) 92%, transparent)), var(--surface);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; padding: 0 4px; min-height: 48px; }
+  .brand .mark { width: 42px; height: 42px; }
+  .brand .mark svg { width: 30px; height: 30px; }
+  .brand strong { display: block; font-family: var(--font-display); font-size: 16px; line-height: 1.1; }
+  .brand span { display: block; color: var(--muted); font-size: 13px; }
+  .new { min-height: 44px; padding: 0 14px; border: 1px solid transparent; border-radius: var(--radius-md); background: var(--primary); color: var(--on-primary); display: flex; align-items: center; gap: 8px; font-weight: 700; box-shadow: var(--shadow-soft); }
+  .new:hover { background: var(--primary-strong); transform: translateY(-1px); }
+  .section-label { padding: 4px 4px 0; }
+  #sessions { list-style: none; margin: -8px 0 0; padding: 4px 0; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  #sessions li { min-height: 44px; padding: 8px 12px; border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--muted); transition: background var(--transition), border-color var(--transition), color var(--transition); }
+  #sessions li:hover, #sessions li.active { border-color: var(--border); background: color-mix(in oklab, var(--surface-2) 86%, var(--primary-soft)); color: var(--text); }
+  #sessions li.active { font-weight: 500; }
+  #sessions .title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #sessions .status { font-size: 11px; font-weight: 700; color: var(--muted); border: 1px solid var(--border); border-radius: 99px; padding: 0 8px; flex-shrink: 0; }
+  #sessions .trash { flex-shrink: 0; display: grid; place-items: center; padding: 5px; margin: -5px; border-radius: 6px; color: var(--faint); opacity: 0; }
+  #sessions li:hover .trash, #sessions li.active .trash, #sessions .trash:focus-visible { opacity: 1; }
+  #sessions .trash:hover { color: var(--danger); background: var(--surface-3); }
+  @media (hover: none) { #sessions .trash { opacity: 1; } }
+  #sessions .none { color: var(--faint); cursor: default; font-size: 14px; }
+  #sessions .none:hover { background: none; border-color: transparent; }
+  .side-card { padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: color-mix(in oklab, var(--surface) 88%, transparent); box-shadow: var(--shadow-soft); }
+  .side-card p { margin: 6px 0 0; font-size: 14px; }
+
+  /* Main */
+  main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  header { min-height: 76px; padding: 12px 24px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; background: color-mix(in oklab, var(--bg) 84%, transparent); backdrop-filter: blur(18px); }
+  .heading { flex: 1; min-width: 0; }
+  header .name { display: block; margin: 0 -6px; padding: 0 6px; border-radius: 6px; font-family: var(--font-display); font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  header .name[contenteditable="true"] { outline: 2px solid var(--primary); cursor: text; text-overflow: clip; }
+  header .name.renamable:hover { background: var(--surface-2); cursor: text; }
+  header .info { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .btn { min-height: 40px; padding: 0 14px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--surface); font-size: 14px; font-weight: 500; }
+  .btn:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+  .icon-btn { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); flex-shrink: 0; }
+  .icon-btn:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .icon-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  #menuBtn { display: none; }
+
+  #messages { flex: 1; overflow-y: auto; padding: 28px 24px; scroll-behavior: smooth; }
+  .thread { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+  .row { display: flex; gap: 12px; align-items: flex-start; animation: in 320ms var(--ease-out); }
+  .row.user { flex-direction: row-reverse; }
+  .avatar { width: 34px; height: 34px; border-radius: var(--radius-md); flex-shrink: 0; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  .row.user .avatar { border: 1px solid var(--border); background: var(--surface-2); color: var(--muted); }
+  .row.assistant .avatar svg { width: 24px; height: 24px; }
+  .msg { max-width: min(78%, 640px); padding: 12px 16px; border-radius: var(--radius-lg); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .row.user .msg { background: var(--primary); color: var(--on-primary); border-top-right-radius: 4px; }
+  .row.assistant .msg { border: 1px solid var(--border); background: color-mix(in oklab, var(--surface) 90%, transparent); box-shadow: var(--shadow-soft); border-top-left-radius: 4px; }
+  .row.error .msg { background: color-mix(in oklab, var(--danger) 12%, var(--surface)); border-color: color-mix(in oklab, var(--danger) 35%, transparent); color: var(--danger); }
+  .typing { display: flex; gap: 5px; padding: 16px 18px; }
+  .typing span { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); animation: blink 1.2s infinite; }
+  .typing span:nth-child(2) { animation-delay: .2s; }
+  .typing span:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+  @keyframes in { from { opacity: 0; filter: blur(4px); transform: translateY(4px); } }
+
+  .empty {
+    position: relative; overflow: hidden; max-width: 800px; margin: 4vh auto 0; padding: 40px 32px;
+    border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow);
+    background:
+      radial-gradient(circle at 82% 22%, color-mix(in oklab, var(--primary) 24%, transparent), transparent 30%),
+      linear-gradient(135deg, color-mix(in oklab, var(--surface) 92%, var(--primary-soft)), var(--surface-2));
+    animation: in 320ms var(--ease-out);
+  }
+  .empty::after {
+    content: ""; position: absolute; right: -8%; bottom: -30%; width: 42%; aspect-ratio: 1; border-radius: 50%; border: 1px solid var(--border); opacity: .28;
+    background: repeating-conic-gradient(color-mix(in oklab, var(--primary) 30%, transparent) 0deg 8deg, transparent 8deg 22deg);
+    animation: spin 30s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(1turn); } }
+  .empty > * { position: relative; z-index: 1; }
+  .empty .mark { width: 52px; height: 52px; margin-bottom: 18px; }
+  .empty .mark svg { width: 36px; height: 36px; }
+  .empty h2 { margin: 8px 0 10px; font-family: var(--font-display); font-size: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem); line-height: 1.05; letter-spacing: -.035em; }
+  .empty p { max-width: 56ch; margin: 0 0 22px; color: var(--muted); }
+  .empty .btn { background: var(--primary); color: var(--on-primary); border-color: transparent; padding: 0 18px; min-height: 44px; font-weight: 700; }
+  .empty .btn:hover { background: var(--primary-strong); }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 4px 14px; border: 1px solid var(--border); border-radius: 99px; background: color-mix(in oklab, var(--surface) 78%, transparent); color: var(--muted); font-size: 14px; font-weight: 700; text-align: left; }
+  .chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+  .chip:hover { color: var(--text); border-color: var(--primary); background: var(--primary-soft); }
+
+  /* Composer */
+  form { padding: 12px 24px 18px; }
+  .composer { max-width: 800px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 8px 8px 8px 16px; background: var(--surface); box-shadow: var(--shadow-soft); transition: border-color var(--transition); }
+  .composer:focus-within { border-color: var(--primary); }
+  textarea { flex: 1; resize: none; border: none; outline: none; background: none; color: inherit; font: inherit; padding: 7px 0; max-height: 200px; line-height: 1.5; }
+  textarea:focus-visible { outline: none; }
+  textarea::placeholder { color: var(--faint); }
+  textarea:disabled { cursor: not-allowed; }
+  #send { width: 40px; height: 40px; border-radius: var(--radius-md); background: var(--primary); color: var(--on-primary); display: grid; place-items: center; flex-shrink: 0; }
+  #send:hover:not(:disabled) { background: var(--primary-strong); }
+  #send:disabled { opacity: .35; cursor: not-allowed; }
+  .hint { max-width: 800px; margin: 8px auto 0; text-align: center; font-size: 12px; color: var(--faint); }
+
+  /* Account */
+  .account { display: flex; align-items: center; gap: 10px; padding: 10px 4px 0; border-top: 1px solid var(--border); }
+  .account .who { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary-strong); font-weight: 700; font-size: 14px; flex-shrink: 0; }
+  .account .uname { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .account button { font-size: 13px; color: var(--muted); padding: 6px 8px; border-radius: 6px; }
+  .account button:hover { color: var(--text); background: var(--surface-3); }
+
+  /* Sign-in screen */
+  #authView { display: none; position: fixed; inset: 0; z-index: 50; place-items: center; padding: 16px; overflow-y: auto; }
+  body.signed-out #authView { display: grid; }
+  body.signed-out > aside, body.signed-out > main { visibility: hidden; }
+  .auth-card { width: min(100%, 420px); padding: 32px 28px; border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow); animation: in 320ms var(--ease-out); }
+  .auth-card .mark { width: 52px; height: 52px; margin-bottom: 18px; }
+  .auth-card .mark svg { width: 36px; height: 36px; }
+  .auth-card h1 { margin: 6px 0 4px; font-family: var(--font-display); font-size: 28px; letter-spacing: -.03em; line-height: 1.1; }
+  .auth-card .sub { margin: 0 0 22px; color: var(--muted); }
+  .auth-card label { display: block; margin-bottom: 14px; font-size: 13px; font-weight: 700; color: var(--muted); }
+  .auth-card input { display: block; width: 100%; margin-top: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg); color: var(--text); font: inherit; font-weight: 400; transition: border-color var(--transition); }
+  .auth-card input:focus { outline: none; border-color: var(--primary); }
+  .auth-card .submit { width: 100%; min-height: 44px; margin-top: 6px; border-radius: var(--radius-md); background: var(--primary); color: var(--on-primary); font-weight: 700; }
+  .auth-card .submit:hover:not(:disabled) { background: var(--primary-strong); }
+  .auth-card .submit:disabled { opacity: .6; cursor: wait; }
+  .auth-card .error { min-height: 20px; margin: 0 0 8px; color: var(--danger); font-size: 14px; }
+  .auth-card .switch { margin: 18px 0 0; text-align: center; font-size: 14px; color: var(--muted); }
+  .auth-card .switch button { color: var(--primary); font-weight: 700; }
+  .auth-card .switch button:hover { text-decoration: underline; }
+
+  /* Mobile */
+  .scrim { display: none; }
+  @media (max-width: 760px) {
+    aside { position: fixed; inset: 0 auto 0 0; z-index: 20; transform: translateX(-100%); transition: transform .2s var(--ease-out); box-shadow: var(--shadow); }
+    body.nav-open aside { transform: none; }
+    body.nav-open .scrim { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 10; }
+    #menuBtn { display: grid; }
+    header { padding: 10px 16px; min-height: 64px; }
+    header .info, header .eyebrow { display: none; }
+    #messages { padding: 20px 16px; }
+    form { padding: 10px 16px 14px; }
+    .empty { padding: 28px 20px; }
+    .msg { max-width: 85%; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand">
+    <div class="mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5.5 38.8 14v17L24 39.5 9.2 31V14L24 5.5Z"/><path d="M24 13.5 31.9 18v9.7L24 32.5l-7.9-4.8V18L24 13.5Z"/><path d="M24 5.5v8m14.8.5-6.9 4M9.2 14l6.9 4M24 32.5v7"/><circle cx="24" cy="24" r="2.8"/></svg></div>
+    <div><strong>Quantum Ready</strong><span>Assistant</span></div>
+  </div>
+  <button class="new" onclick="newSession()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    New chat
+  </button>
+  <div class="section-label eyebrow">Recent</div>
+  <ul id="sessions"></ul>
+  <section class="side-card">
+    <span class="eyebrow">Focus</span>
+    <p>Post-quantum cryptography, migration roadmaps, and quantum readiness for enterprise architecture.</p>
+  </section>
+  <div class="account">
+    <span class="who" id="userInitial"></span>
+    <span class="uname" id="userName"></span>
+    <button onclick="signOut()">Sign out</button>
+  </div>
+</aside>
+<div class="scrim" onclick="document.body.classList.remove('nav-open')"></div>
+<main>
+  <header>
+    <button class="icon-btn" id="menuBtn" aria-label="Menu" onclick="document.body.classList.toggle('nav-open')">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div class="heading">
+      <p class="eyebrow">AI-native readiness assistant</p>
+      <span class="name" id="name">No session</span>
+    </div>
+    <span class="info" id="info"></span>
+    <button class="btn" id="closeBtn" onclick="closeSession()" hidden>Close</button>
+    <button class="btn" id="reopenBtn" onclick="reopenSession()" hidden>Reopen</button>
+    <button class="btn danger" id="deleteBtn" onclick="deleteSession()" hidden>Delete</button>
+    <button class="icon-btn" id="themeBtn" aria-label="Switch theme" title="Switch theme">
+      <svg viewBox="0 0 24 24"><path d="M12 3v2.5M12 18.5V21M4.2 4.2l1.8 1.8M18 18l1.8 1.8M3 12h2.5M18.5 12H21M4.2 19.8 6 18M18 6l1.8-1.8"/><circle cx="12" cy="12" r="4"/></svg>
+    </button>
+  </header>
+  <div id="messages"></div>
+  <form id="form">
+    <div class="composer">
+      <textarea id="input" rows="1" placeholder="Ask Quantum Ready…" disabled></textarea>
+      <button id="send" aria-label="Send" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </button>
+    </div>
+    <div class="hint">Quantum Ready · Enter to send, Shift+Enter for a new line</div>
+  </form>
+</main>
+<div id="authView">
+  <form class="auth-card" id="authForm">
+    <div class="mark"></div>
+    <p class="eyebrow">Quantum Ready Assistant</p>
+    <h1 id="authTitle">Sign in</h1>
+    <p class="sub" id="authSub">Your chats are private to your account.</p>
+    <label>Username<input id="authUser" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+    <label>Password<input id="authPass" type="password" autocomplete="current-password" required></label>
+    <p class="error" id="authError" role="alert"></p>
+    <button class="submit" id="authSubmit">Sign in</button>
+    <p class="switch"><span id="authSwitchText">New here?</span> <button type="button" id="authSwitch">Create an account</button></p>
+  </form>
+</div>
+<script>
+let current = null;
+let busy = false;
+const $ = id => document.getElementById(id);
+const LOGO = document.querySelector('.brand .mark').innerHTML;
+const SUGGESTIONS = [
+  'Where should we start with post-quantum migration?',
+  'How do we build a cryptographic inventory?',
+  'What does "harvest now, decrypt later" mean for us?',
+];
+
+$('themeBtn').onclick = () => {
+  const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem('qr-theme', theme); } catch {}
+};
+
+// --- auth ---
+let token = null;
+try { token = localStorage.getItem('qr-token'); } catch {}
+let registering = false;
+
+function saveToken(t) {
+  token = t;
+  try { t ? localStorage.setItem('qr-token', t) : localStorage.removeItem('qr-token'); } catch {}
+}
+
+function showAuth(message = '') {
+  saveToken(null);
+  current = null;
+  document.body.classList.add('signed-out');
+  $('authError').textContent = message;
+  $('authPass').value = '';
+  $('authUser').focus();
+}
+
+function showApp(user) {
+  document.body.classList.remove('signed-out');
+  $('userName').textContent = user.username;
+  $('userInitial').textContent = user.username[0].toUpperCase();
+  current = null;
+  render();
+  loadSessions();
+}
+
+function setAuthMode(isRegister) {
+  registering = isRegister;
+  $('authTitle').textContent = isRegister ? 'Create an account' : 'Sign in';
+  $('authSub').textContent = isRegister ? 'Pick a username and a password of at least 8 characters.' : 'Your chats are private to your account.';
+  $('authSubmit').textContent = isRegister ? 'Create account' : 'Sign in';
+  $('authSwitchText').textContent = isRegister ? 'Already have an account?' : 'New here?';
+  $('authSwitch').textContent = isRegister ? 'Sign in' : 'Create an account';
+  $('authPass').autocomplete = isRegister ? 'new-password' : 'current-password';
+  $('authError').textContent = '';
+}
+
+$('authSwitch').onclick = () => setAuthMode(!registering);
+$('authForm').onsubmit = async e => {
+  e.preventDefault();
+  $('authSubmit').disabled = true;
+  try {
+    const r = await api(registering ? '/auth/register' : '/auth/login', {
+      method: 'POST', body: { username: $('authUser').value, password: $('authPass').value },
+    });
+    saveToken(r.token);
+    $('authPass').value = '';
+    showApp(r.user);
+  } catch (err) {
+    $('authError').textContent = err.message;
+  } finally {
+    $('authSubmit').disabled = false;
+  }
+};
+
+async function signOut() {
+  try { await api('/auth/logout', { method: 'POST' }); } catch {}
+  showAuth();
+}
+
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers.Authorization = 'Bearer ' + token;
+  const res = await fetch('/api' + path, {
+    ...opts, headers,
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  const detail = res.ok ? null : (await res.json().catch(() => ({}))).detail || res.statusText;
+  if (res.status === 401 && !path.startsWith('/auth/')) {
+    showAuth('Your sign-in has expired. Please sign in again.');
+  }
+  if (!res.ok) throw new Error(detail);
+  return res.status === 204 ? null : res.json();
+}
+
+async function loadSessions() {
+  const sessions = await api('/sessions');
+  const mine = current && sessions.find(s => s.id === current.id);
+  if (mine && mine.title !== current.title && !$('name').isContentEditable) $('name').textContent = current.title = mine.title;
+  $('sessions').innerHTML = '';
+  if (!sessions.length) $('sessions').innerHTML = '<li class="none">No chats yet</li>';
+  for (const s of sessions) {
+    const li = document.createElement('li');
+    li.className = s.id === current?.id ? 'active' : '';
+    li.innerHTML = `<span class="title"></span>${s.status === 'active' ? '' : `<span class="status">${s.status}</span>`}
+      <button class="trash" aria-label="Delete chat" title="Delete chat">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/></svg>
+      </button>`;
+    li.querySelector('.title').textContent = s.title;
+    li.onclick = () => { document.body.classList.remove('nav-open'); openSession(s.id); };
+    li.querySelector('.trash').onclick = e => { e.stopPropagation(); deleteSession(s.id); };
+    $('sessions').appendChild(li);
+  }
+}
+
+async function openSession(id) {
+  current = await api('/sessions/' + id);
+  render();
+  loadSessions();
+}
+
+function thread() {
+  let t = $('messages').querySelector('.thread');
+  if (!t) { t = document.createElement('div'); t.className = 'thread'; $('messages').appendChild(t); }
+  return t;
+}
+
+function render() {
+  const active = current?.status === 'active';
+  $('name').textContent = current ? current.title : 'No session';
+  $('name').classList.toggle('renamable', !!current);
+  $('name').title = current ? 'Click to rename' : '';
+  $('info').textContent = current && !active ? `This chat is ${current.status}` : '';
+  $('closeBtn').hidden = !active;
+  $('reopenBtn').hidden = !current || active;
+  $('deleteBtn').hidden = !current;
+  $('input').disabled = !active;
+  $('input').placeholder = current && !active ? `This chat is ${current.status}` : 'Ask Quantum Ready…';
+  updateSend();
+  $('messages').innerHTML = '';
+  if (!current) {
+    $('messages').innerHTML = `<div class="empty"><div class="mark">${LOGO}</div>
+      <p class="eyebrow">Quantum readiness and decision intelligence</p>
+      <h2>Quantum Ready Assistant</h2>
+      <p>Ask about post-quantum cryptography, migration roadmaps, or quantum use cases for your enterprise.</p>
+      <button class="btn" onclick="newSession()">Start a new chat</button></div>`;
+    return;
+  }
+  if (!current.messages.length) {
+    $('messages').innerHTML = `<div class="empty"><div class="mark">${LOGO}</div>
+      <p class="eyebrow">New conversation</p><h2>What would you like to explore?</h2>
+      <p>Pick a starting point or ask your own question below.</p><div class="chips"></div></div>`;
+    for (const q of active ? SUGGESTIONS : []) {
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.textContent = q;
+      b.onclick = () => { $('input').value = q; send(); };
+      $('messages').querySelector('.chips').appendChild(b);
+    }
+  }
+  current.messages.forEach(addMessage);
+  if (active) $('input').focus();
+}
+
+function addMessage(m, extraClass = '') {
+  $('messages').querySelector('.empty')?.remove();
+  const row = document.createElement('div');
+  row.className = `row ${m.role} ${extraClass}`;
+  row.innerHTML = `<div class="avatar${m.role === 'user' ? '">You' : ` mark">${LOGO}`}</div><div class="msg"></div>`;
+  row.querySelector('.msg').textContent = m.content;
+  thread().appendChild(row);
+  $('messages').scrollTop = $('messages').scrollHeight;
+  return row;
+}
+
+function showTyping() {
+  const row = addMessage({ role: 'assistant', content: '' });
+  row.querySelector('.msg').outerHTML = '<div class="msg typing"><span></span><span></span><span></span></div>';
+  return row;
+}
+
+async function newSession() {
+  document.body.classList.remove('nav-open');
+  const s = await api('/sessions', { method: 'POST', body: {} });
+  openSession(s.id);
+}
+
+async function closeSession() {
+  await api(`/sessions/${current.id}/close`, { method: 'POST' });
+  openSession(current.id);
+}
+
+async function reopenSession() {
+  await api(`/sessions/${current.id}/reopen`, { method: 'POST' });
+  openSession(current.id);
+}
+
+async function deleteSession(id = current.id) {
+  if (!confirm('Delete this chat?')) return;
+  await api('/sessions/' + id, { method: 'DELETE' });
+  if (id === current?.id) { current = null; render(); }
+  loadSessions();
+}
+
+// Rename by clicking the title
+$('name').onclick = () => {
+  if (!current || $('name').isContentEditable) return;
+  const el = $('name');
+  el.contentEditable = 'true';
+  el.focus();
+  document.getSelection().selectAllChildren(el);
+  const finish = async save => {
+    el.contentEditable = 'false';
+    el.onblur = el.onkeydown = null;
+    const title = el.textContent.trim();
+    if (save && title && title !== current.title) {
+      try { current = { ...current, ...(await api('/sessions/' + current.id, { method: 'PATCH', body: { title } })), messages: current.messages }; loadSessions(); }
+      catch (e) { alert('Rename failed: ' + e.message); }
+    }
+    el.textContent = current.title;
+  };
+  el.onblur = () => finish(true);
+  el.onkeydown = e => {
+    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+    if (e.key === 'Escape') { el.textContent = current.title; finish(false); }
+  };
+};
+
+function autosize() {
+  const t = $('input');
+  t.style.height = 'auto';
+  t.style.height = Math.min(t.scrollHeight, 200) + 'px';
+}
+
+function updateSend() {
+  $('send').disabled = busy || $('input').disabled || !$('input').value.trim();
+}
+
+async function send() {
+  const content = $('input').value.trim();
+  if (!content || !current || busy) return;
+  $('input').value = '';
+  autosize();
+  busy = true; updateSend();
+  addMessage({ role: 'user', content });
+  const typing = showTyping();
+  try {
+    const r = await api(`/sessions/${current.id}/messages`, { method: 'POST', body: { content } });
+    typing.remove();
+    current.messages.push(r.user, r.assistant);
+    addMessage(r.assistant);
+    const notes = [`~${r.context.tokens} tokens in context`];
+    if (r.context.summarized) notes.push(`${r.context.summarized} earlier msgs summarized`);
+    if (r.context.dropped) notes.push(`${r.context.dropped} trimmed`);
+    $('info').textContent = notes.join(', ');
+    loadSessions();
+  } catch (e) {
+    typing.remove();
+    addMessage({ role: 'assistant', content: 'Error: ' + e.message }, 'error');
+  } finally {
+    busy = false; updateSend();
+    $('input').focus();
+  }
+}
+
+$('form').onsubmit = e => { e.preventDefault(); send(); };
+$('input').oninput = () => { autosize(); updateSend(); };
+$('input').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
+document.querySelector('#authForm .mark').innerHTML = LOGO;
+if (token) {
+  api('/auth/me').then(showApp).catch(() => showAuth());
+} else {
+  showAuth();
+}
+</script>
+</body>
+</html>
