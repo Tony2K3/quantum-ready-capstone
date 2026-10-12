@@ -1,0 +1,6 @@
+id,source,name,sensitivity,retention,owner,lifecycle,used_by_apps,carried_by_interfaces,description,other_properties
+bd:do-1,bluedolphin,Customer Record,Confidential,7 years,Data governance,,Customer Portal; Order Service,,,{}
+bd:do-2,bluedolphin,Payment Transaction,Restricted,10 years,Finance,,Payments Gateway,Order to Payments API,,{}
+bd:do-3,bluedolphin,Product Catalog,Public,1 year,Merchandising,,,,,{}
+lx:lx-do-1,leanix,Employee Record,confidential,Employment + 7 years,,active,HR Portal; Legacy Payroll,SSO Login (SAML),,{}
+lx:lx-do-2,leanix,Payroll Run,restricted,10 years,,active,Legacy Payroll,,,{}
