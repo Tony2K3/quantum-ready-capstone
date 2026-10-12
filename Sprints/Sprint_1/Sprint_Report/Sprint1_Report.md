@@ -26,9 +26,9 @@
 **Russell – Connector & Integration**
 
 - Built the MCP connector for BlueDolphin and LeanIX, mapping their data into the qros topology schema.
--Built the chat bot backend. It’s fully functional and only needs an LLM connection.
--Built a rough chat front end for interacting with the assistant.
--Tested the MCP connector end to end without live API access.
+- Built the chat bot backend. It’s fully functional and only needs an LLM connection.
+- Built a rough chat front end for interacting with the assistant.
+- Tested the MCP connector end to end without live API access.
 
 ## Work Summary (Developer Facing)
 
@@ -139,9 +139,9 @@ NA
 
 **Russell:**
 
--Finished both the MCP connector and the chat backend, going past the Sprint 1 requirements.
--Followed the technical spec closely, so the connector output fits the existing topology schema.
--Got the connector fully tested even without real API access.
+- Finished both the MCP connector and the chat backend, going past the Sprint 1 requirements.
+- Followed the technical spec closely, so the connector output fits the existing topology schema.
+- Got the connector fully tested even without real API access.
 
 ### Here's what we'd like to improve:
 
@@ -155,10 +155,10 @@ NA
 
 **Russell:**
 
--Get access to LeanIX and BlueDolphin API keys or sandboxes so the connector can be tested against real data.
--Connect the chat backend to an LLM and test it with real queries.
--Clean up and improve the chat front end.
--Coordinate more closely with Peter and Tony on how the chat assistant will use the roadmap generator and simulator.
+- Get access to LeanIX and BlueDolphin API keys or sandboxes so the connector can be tested against real data.
+- Connect the chat backend to an LLM and test it with real queries.
+- Clean up and improve the chat front end.
+- Coordinate more closely with Peter and Tony on how the chat assistant will use the roadmap generator and simulator.
 
 ### Here are changes we plan to implement in the next sprint:
 
@@ -176,4 +176,5 @@ NA
 
 - MCP framework
 - blue dolphin and leanix connection
+  
   **most of this is already done for the mcp so i will be making it better/testing**
