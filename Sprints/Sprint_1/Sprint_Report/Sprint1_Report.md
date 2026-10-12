@@ -2,7 +2,7 @@
 
 **Project:** Quantum Ready  
 **Team Members:** Tony Cao, Peter Liu, Russell Habib  
-**Sprint Period:** [Start Date] – [End Date]
+**Sprint Period:** 09/05/2026 – 10/05/2026
 
 ## YouTube Link of Sprint 1 Video
 
@@ -17,7 +17,11 @@
 - Defined the approach for identifying topology relationships and dependencies.
 
 **Peter – AI Reasoning & Roadmap Intelligence**
-- [Peter – Add your Sprint 1 contributions here]
+- Quantum risk scoring across your application portfolio which are ranked by urgency
+- AI-generated 30/60/90 day and 2–5 year roadmaps tailored to your role (EA, CTO, CISO)
+- Every recommendation traces back to the assessment data that supports it and no new information is generated
+- Foundation laid for natural language chat over the generated roadmap
+
 
 **Russell – Connector & Integration**
 - [Russell – Add your Sprint 1 contributions here]
@@ -30,7 +34,7 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 
 **Peter:**
 
-[Peter – Add your work summary here]
+I delivered the core pipeline for the Decision Cortex roadmap generator for this sprint. All input and output data contracts were defined as validated Pydantic models covering enterprise architecture ingestion, priority scoring, and roadmap output. TypeSafe AI’s Jev model was used for per-application quantum priority scoring across five independent dimensions, with applications scored concurrently and mapped to ranked priority objects. A persona based prompt assembly layer was built supporting EA, CTO, and CISO definitions, with Anthropic Claude handling structured roadmap generation backed by schema validation and retry logic. The full pipeline runs end-to-end from enterprise architecture input to a validated roadmap output. Supporting documentation was produced covering the prompt strategy, deterministic vs. LLM responsibilities, and a formal chat context contract defining the MCP tool interface for downstream integration.
 
 **Russell:**
 
@@ -42,7 +46,7 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 - No unfinished work identified within the assigned M1 requirements and architecture scope.
 
 **Peter:**
-- [Peter – Add unfinished work, if applicable]
+- All Sprint 1 responsibilities were completed.
 
 **Russell:**
 - [Russell – Add unfinished work, if applicable]
@@ -56,7 +60,7 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 - Design Topology Relationship Handling – https://github.com/Tony2K3/quantum-ready-capstone/issues/4
 
 **Peter:**
-- [Peter – Add completed issues and links]
+- Defined in Clickup
 
 **Russell:**
 - [Russell – Add completed issues and links]
@@ -67,7 +71,7 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 - None identified within the M1 scope.
 
 **Peter:**
-- [Peter – Add incomplete issues and explanations, if applicable]
+- N/A
 
 **Russell:**
 - [Russell – Add incomplete issues and explanations, if applicable]
@@ -82,8 +86,17 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 - [test_engine.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/simulator/test_engine.py) – Validates simulation behavior, topology preservation, and assessment results.
 - [test_relationships.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/simulator/test_relationships.py) – Validates topology relationship handling and dependency identification.
 
-**Peter:**
-- [Peter – Add code files and GitHub links]
+**Peter – Roadmap Generator (Decision Cortex)**
+- [pipeline.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/pipeline.py) – End-to-end entry point from enterprise architecture input to validated roadmap output.
+- [jev_scoring.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/analysis/jev_scoring.py) – Concurrent per-application quantum priority scoring with TypeSafe AI's Jev model.
+- [prompts.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/llm/prompts.py) – Persona definitions (EA, CTO, CISO) and versioned prompt templates.
+- [context.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/llm/context.py) – Assembles scored assessment data into the persona-specific prompt.
+- [caller.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/llm/caller.py) – Anthropic Claude roadmap generation with schema validation and retry logic.
+- [models/](https://github.com/Tony2K3/quantum-ready-capstone/tree/main/code/backend/src/roadmap/models) – Pydantic data contracts for enterprise architecture, priority scores, and roadmap output.
+- [prompt_strategy.md](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/docs/prompt_strategy.md) – Prompt strategy and deterministic vs. LLM responsibilities.
+- [chat_context_contract.md](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/docs/chat_context_contract.md) – Chat context contract and MCP tool interface for downstream integration.
+- [README.md](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/README.md) – Roadmap generator overview, setup, and test instructions.
+- [tests/roadmap/](https://github.com/Tony2K3/quantum-ready-capstone/tree/main/code/backend/tests/roadmap) – Unit tests for models, Jev scoring, prompt/context assembly, and the LLM caller.
 
 **Russell:**
 - [Russell – Add code files and GitHub links]
@@ -99,7 +112,8 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 - Identified how to reuse existing assessment functionality.
 
 **Peter:**
-- [Peter – Add what went well]
+- Tested and implemented TypeSafe AI's new Jev model to deterministically give a score for an applications PQC readiness.
+- Created an end-to-end pipeline to generate an AI powered roadmap that does not make up information.
 
 **Russell:**
 - [Russell – Add what went well]
@@ -112,7 +126,7 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 - Strengthen coordination around shared data structures.
 
 **Peter:**
-- [Peter – Add areas for improvement]
+- Implement a more robust data intake system to handle different MCP connectors.
 
 **Russell:**
 - [Russell – Add areas for improvement]
@@ -125,7 +139,9 @@ During Sprint 1, I focused on defining the requirements and designing the initia
 - Improve technical documentation based on team feedback.
 
 **Peter:**
-- [Peter – Add next sprint plans]
+- Roadmap generator core engine & persona prompt chains​
+- role-based output refinement​
+- EAM input handling​
 
 **Russell:**
 - [Russell – Add next sprint plans]

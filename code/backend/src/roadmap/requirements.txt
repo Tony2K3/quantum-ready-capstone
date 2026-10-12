@@ -1,0 +1,11 @@
+# Core
+pydantic>=2.7,<3
+
+# LLM
+anthropic>=0.40.0
+
+# Jev scoring
+requests>=2.32.0
+
+# Test
+pytest>=7.0
