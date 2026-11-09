@@ -6,7 +6,7 @@
 
 ## YouTube Link of Sprint 2 Video
 
-[Sprint 2 Demo]()
+[Sprint 2 Demo](https://www.youtube.com/watch?v=kG9OH-W5-fo)
 
 ## What's New (User Facing)
 
