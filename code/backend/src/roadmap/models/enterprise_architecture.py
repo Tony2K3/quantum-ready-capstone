@@ -8,7 +8,7 @@ validated payload.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .application import Application
 from .connection import Connection
@@ -52,5 +52,4 @@ class EnterpriseArchitecture(BaseModel):
                 )
         return self
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")

@@ -7,11 +7,19 @@ Forms an EA graph used for reasoning about migration sequencing and downstream i
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from .provenance import LifecyclePhase, SourceSystem
 
 # Type aliases
+
+Frequency = Literal[
+    "Real-time", "Hourly", "Daily", "Weekly", "Monthly", "Yearly", "On Demand"
+]
+Direction = Literal["unidirectional", "bidirectional"]
 
 RelationshipType = Literal[
     "API",
@@ -78,6 +86,62 @@ class Connection(BaseModel):
         description="Free-text description of the connection (from the connector)."
     )
 
+    # Interface detail (from EA tools)
+
+    interface_id: str | None = Field(
+        default=None,
+        description=(
+            "Identifier of the interface this connection came from (e.g. 'INT-010'). "
+            "Several connections may share the same pair of applications but "
+            "never the same interface_id and pair."
+        )
+    )
+    name: str | None = Field(
+        default=None,
+        description="Interface name as recorded in the EA tool."
+    )
+    via: list[str] | None = Field(
+        default=None,
+        description=(
+            "Middleware or infrastructure the data passes through (e.g. 'Boomi SaaS "
+            "Hosting'). Kept here instead of as graph nodes; TLS often terminates there."
+        )
+    )
+    data_objects: list[str] | None = Field(
+        default=None,
+        description="Business data objects carried by this connection."
+    )
+    frequency: Frequency | None = Field(
+        default=None,
+        description="How often data flows over the connection."
+    )
+    direction: Direction | None = Field(
+        default=None,
+        description=(
+            "'bidirectional' when data flows both ways. The source/target "
+            "dependency direction is unaffected."
+        )
+    )
+    lifecycle_status: LifecyclePhase | None = Field(
+        default=None,
+        description="Lifecycle phase of the interface at import time."
+    )
+    lifecycle_dates: dict[LifecyclePhase, date] | None = Field(
+        default=None,
+        description="Start date of each known lifecycle phase."
+    )
+
+    # Provenance
+
+    source_system: SourceSystem | None = Field(
+        default=None,
+        description="System this connection was imported from."
+    )
+    source_id: str | None = Field(
+        default=None,
+        description="The interface's identifier in the source system."
+    )
+
     @model_validator(mode="after")
     def source_and_target_must_differ(self) -> Connection:
         if self.source_application_id == self.target_application_id:
@@ -86,5 +150,4 @@ class Connection(BaseModel):
             )
         return self
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")

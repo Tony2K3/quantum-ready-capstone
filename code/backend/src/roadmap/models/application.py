@@ -6,9 +6,12 @@ All fields except `id` and `name` are optional.
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+from .provenance import FieldSource, LifecyclePhase, SourceSystem
 
 # Type aliases for categorical fields
 
@@ -21,6 +24,35 @@ DeploymentEnvironment = Literal["Cloud", "On-Premise", "Hybrid"]
 NetworkExposure = Literal["Public", "Internal", "Isolated"]
 KeyManagementType = Literal["HSM", "KMS", "Software", "None"]
 PQCReadiness = Literal["Not Assessed", "Not Ready", "Partial", "Ready"]
+
+HostingType = Literal["SaaS", "PaaS", "IaaS", "On-Premise", "Hybrid", "Desktop", "Mobile"]
+TimeClassification = Literal["Tolerate", "Invest", "Migrate", "Eliminate"]
+TechnicalFit = Literal["Inappropriate", "Unreasonable", "Adequate", "Fully Appropriate"]
+
+# Fields whose provenance is tracked in `field_sources` and reported on by
+# the normalizer. Identity fields, free text and passthrough data are excluded.
+TRACKED_FIELDS: tuple[str, ...] = (
+    "business_unit",
+    "owner",
+    "business_criticality",
+    "data_sensitivity",
+    "data_longevity",
+    "vendor_dependency",
+    "technology_stack",
+    "deployment_environment",
+    "hosting_type",
+    "lifecycle_status",
+    "time_classification",
+    "technical_fit",
+    "cryptographic_dependencies",
+    "pqc_readiness",
+    "network_protocols",
+    "network_exposure",
+    "crypto_agility",
+    "key_management_type",
+    "it_components",
+    "data_objects",
+)
 
 
 class Application(BaseModel):
@@ -163,9 +195,70 @@ class Application(BaseModel):
         )
     )
 
+    # Portfolio context (from EA tools)
+
+    hosting_type: HostingType | None = Field(
+        default=None,
+        description=(
+            "Hosting model as recorded in the EA tool. More detailed than "
+            "deployment_environment, which is derived from it when not provided."
+        )
+    )
+    lifecycle_status: LifecyclePhase | None = Field(
+        default=None,
+        description=(
+            "Lifecycle phase in effect at import time. Planned or retiring "
+            "applications should not be prioritised like live ones."
+        )
+    )
+    lifecycle_dates: dict[LifecyclePhase, date] | None = Field(
+        default=None,
+        description="Start date of each known lifecycle phase."
+    )
+    time_classification: TimeClassification | None = Field(
+        default=None,
+        description="Gartner TIME classification (Tolerate, Invest, Migrate, Eliminate)."
+    )
+    technical_fit: TechnicalFit | None = Field(
+        default=None,
+        description="How well the application's technology suits its purpose."
+    )
+    it_components: list[str] | None = Field(
+        default=None,
+        description="Underlying technology components (platforms, databases, middleware)."
+    )
+    data_objects: list[str] | None = Field(
+        default=None,
+        description=(
+            "Business data objects this application exchanges (e.g. 'Customer', "
+            "'Price'). Taken from its interfaces when not provided directly."
+        )
+    )
+
+    # Provenance
+
+    source_system: SourceSystem | None = Field(
+        default=None,
+        description=(
+            "System this record was imported from. 'placeholder' means the "
+            "application was only referenced by an interface and has no record of its own."
+        )
+    )
+    source_id: str | None = Field(
+        default=None,
+        description="The record's identifier in the source system (e.g. the LeanIX fact sheet id)."
+    )
+    field_sources: dict[str, FieldSource] = Field(
+        default_factory=dict,
+        description=(
+            "Where each tracked field's value came from, keyed by field name. "
+            "See TRACKED_FIELDS."
+        )
+    )
+
     # Connector passthrough
 
-    extra_attributes: dict[str, str] | None = Field(
+    extra_attributes: dict[str, str | list[str]] | None = Field(
         default=None,
         description=(
             "Catch-all for additional EA attributes provided by the connector "
@@ -173,8 +266,5 @@ class Application(BaseModel):
         )
     )
 
-    # Schema Metadata
-
-    class Config:
-        # Reject unexpected fields from the connector rather than silently dropping them
-        extra = "forbid"
+    # Reject unexpected fields from the connector rather than silently dropping them
+    model_config = ConfigDict(extra="forbid")

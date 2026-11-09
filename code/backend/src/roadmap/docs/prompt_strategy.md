@@ -26,7 +26,7 @@ LLM outputs:
 ```
 Connector / CSV
       ↓
-Validation + Normalisation     ← deterministic
+Validation + Normalisation     ← deterministic (src/ingest)
       ↓
 Dependency Graph               ← deterministic
       ↓

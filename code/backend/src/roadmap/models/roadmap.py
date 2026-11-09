@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from .priority import ApplicationPriority, PriorityLevel
 
@@ -143,8 +143,7 @@ class LLMRoadmapContent(BaseModel):
         )
     )
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 # Final combined output
@@ -208,5 +207,4 @@ class RoadmapOutput(BaseModel):
     assumptions: list[str] = Field(default_factory=list)
     missing_data: list[str] = Field(default_factory=list)
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")

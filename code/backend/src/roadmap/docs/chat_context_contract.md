@@ -164,10 +164,31 @@ Connection
 ├── target_application_id   str   the application being depended upon
 ├── relationship            str   "API", "Database", "Message Queue", ...
 ├── dependency_type         str | None   "Required", "Optional"
-└── criticality             str | None   "Low", "Medium", "High"
+├── criticality             str | None   "Low", "Medium", "High"
+├── interface_id            str | None   e.g. "INT-010"; several connections may share a pair
+├── name                    str | None   interface name from the EA tool
+├── via                     list[str] | None   middleware the data passes through (e.g. Boomi)
+├── data_objects            list[str] | None   business data carried (e.g. "Customer")
+├── frequency               str | None   "Real-time", "Daily", ...
+├── direction               str | None   "unidirectional", "bidirectional"
+├── lifecycle_status        str | None   "Plan", "Active", "Phase Out", ...
+└── source_system           str | None   "leanix", "csv", ...
 ```
 
-Direction: `source -> target` means source depends on / calls target.
+Direction: `source -> target` means source depends on / calls target. For
+imported interfaces, the consumer is the source and the provider is the target.
+
+### Application provenance
+
+Each `Application` also carries:
+- `source_system`: where the record came from. `"placeholder"` means the
+  application was only referenced by an interface and has no data of its own.
+- `field_sources`: for each tracked field, whether the value was `imported`
+  (with the source cell or derivation) or is `missing`. Use this to answer
+  "how do we know that?" and "what data is missing?" for a single application.
+
+The normalizer that builds `EnterpriseArchitecture` is documented in
+`src/ingest/README.md`.
 
 Full schema: `src/roadmap/models/connection.py`
 

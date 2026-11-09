@@ -2,7 +2,7 @@
 
 **Project:** Quantum Ready  
 **Team Members:** Tony Cao, Peter Liu, Russell Habib  
-**Sprint Period:** 010/05/2026 – 11/05/2026
+**Sprint Period:** 10/05/2026 – 11/05/2026
 
 ## YouTube Link of Sprint 2 Video
 
@@ -18,6 +18,9 @@
 - Enabled comparison of readiness scores, failing findings, and affected infrastructure nodes.
 
 **Peter – AI Reasoning & Roadmap Intelligence**
+- EA data normalizer: imports LeanIX exports and our CSV templates into the validated architecture model, with no guessed values.
+- Expanded data model: adds lifecycle, hosting, middleware, data objects and interface details to applications and connections.
+- Tests and docs: 67 new tests (172 total, all passing) and updated ingest and chat-context docs.
 
 **Russell – Connector & Integration**
 
@@ -29,6 +32,7 @@ During Sprint 2, I implemented the core Simulation Engine using the existing QRO
 
 **Peter:**
 
+This sprint I built the EA data normalizer in src/ingest, which turns raw EA tool exports into a validated EnterpriseArchitecture for the roadmap pipeline. There are adapters for LeanIX and a native CSV format, with BlueDolphin stubbed for now. A shared assemble() step merges duplicates, assigns stable APP- IDs, resolves interfaces into consumer→provider connections and drops invalid fields instead of rejecting whole records. It never makes up information from the files. I extended the Pydantic models with lifecycle, hosting, middleware, data objects and interface details. I also added a field_sources map that records where each value came from or marks it as missing.
 
 **Russell:**
 
@@ -39,7 +43,7 @@ During Sprint 2, I implemented the core Simulation Engine using the existing QRO
 - No unfinished work identified within the assigned M2 requirements and architecture scope.
 
 **Peter:**
-- All Sprint 1 responsibilities were completed.
+- All Sprint 2 responsibilities were completed.
 
 **Russell:**
 
@@ -75,17 +79,21 @@ NA
 - [index.ts](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/simulator/index.ts) - Registers simulation routes in the Fastify backend.
 - [api.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/simulator/api.py) - FastAPI endpoints for simulation requests.
 
-**Peter – Roadmap Generator (Decision Cortex)**
-- [pipeline.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/pipeline.py) – End-to-end entry point from enterprise architecture input to validated roadmap output.
-- [jev_scoring.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/analysis/jev_scoring.py) – Concurrent per-application quantum priority scoring with TypeSafe AI's Jev model.
-- [prompts.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/llm/prompts.py) – Persona definitions (EA, CTO, CISO) and versioned prompt templates.
-- [context.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/llm/context.py) – Assembles scored assessment data into the persona-specific prompt.
-- [caller.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/llm/caller.py) – Anthropic Claude roadmap generation with schema validation and retry logic.
-- [models/](https://github.com/Tony2K3/quantum-ready-capstone/tree/main/code/backend/src/roadmap/models) – Pydantic data contracts for enterprise architecture, priority scores, and roadmap output.
-- [prompt_strategy.md](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/docs/prompt_strategy.md) – Prompt strategy and deterministic vs. LLM responsibilities.
-- [chat_context_contract.md](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/docs/chat_context_contract.md) – Chat context contract and MCP tool interface for downstream integration.
-- [README.md](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/README.md) – Roadmap generator overview, setup, and test instructions.
-- [tests/roadmap/](https://github.com/Tony2K3/quantum-ready-capstone/tree/main/code/backend/tests/roadmap) – Unit tests for models, Jev scoring, prompt/context assembly, and the LLM caller.
+**Peter – EAM Data Ingestor**
+- [__init__.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/__init__.py): Public `normalize()` API that runs the source adapters and assembles the result.
+- [assemble.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/assemble.py): Merges records, assigns IDs, resolves dependencies and validates against the Pydantic models.
+- [leanix.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/leanix.py): LeanIX export adapter.
+- [csv_native.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/csv_native.py): Native CSV adapter and template generator.
+- [bluedolphin.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/bluedolphin.py): BlueDolphin placeholder with the planned mapping.
+- [mappings.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/mappings.py): Maps LeanIX values onto model values.
+- [report.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/report.py): Normalization report covering issues, missing data and field coverage.
+- [cli.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/cli.py): Command-line interface for running the normalizer.
+- [README.md](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/ingest/README.md): Normalizer rules, mapping tables and usage.
+- [application.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/models/application.py): Extended Application model with field provenance.
+- [connection.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/models/connection.py): Extended Connection model with interface metadata.
+- [provenance.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/roadmap/models/provenance.py): Field source tracking and lifecycle derivation.
+- [test_ingest_leanix.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/test_ingest_leanix.py): Tests LeanIX parsing, merging, dependency resolution and missing-data reporting.
+- [test_ingest_csv_and_cli.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/test_ingest_csv_and_cli.py): Tests CSV import, overlays, CLI behavior and that descriptions never reach the LLM prompt.
 
 **Russell – Connector & Integration**
 
@@ -124,9 +132,9 @@ NA
 - Verified API functionality through local GET and POST requests.
 
 **Peter:**
-- Improve coordination with Group 1 for frontend integration.
-- Expand test coverage for invalid inputs and edge cases.
-- Simplify service setup and dependency management.
+- The real LeanIX sample exports let us map against actual client data
+- The normalizer is slotted into the existing pipeline. Its output feeds straight into roadmap generation with no changes downstream.
+- Strong test coverage on synthetic data keeps client data out of the repo and CI.
 
 **Russell:**
 
@@ -139,6 +147,7 @@ NA
 - Simplify service setup and dependency management.
 
 **Peter:**
+- Complete BlueDolphin integration
 
 **Russell:**
 
@@ -152,7 +161,10 @@ NA
 - Improve automated testing and deployment readiness.
 
 **Peter:**
-
+- Implement the BlueDolphin adapter once we have a sample export.
+- Pass the new fields (lifecycle, data objects) to Jev scoring.
+- Add user input for missing crypto/risk fields.
+- Run the full pipeline end to end: import → Jev → roadmap.
 
 **Russell:**
 
