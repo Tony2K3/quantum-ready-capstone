@@ -20,6 +20,7 @@
 **Peter – AI Reasoning & Roadmap Intelligence**
 
 **Russell – Connector & Integration**
+- Built the user interface for the chat assistant.
 
 ## Work Summary (Developer Facing)
 
@@ -61,6 +62,9 @@ NA
 **Tony:**
 - Frontend integration and deployment are pending.
 
+**Russell:**
+- Frontend integration and deployment are pending.
+
 
 ## Code Files for Review
 
@@ -89,7 +93,7 @@ NA
 
 **Russell – Connector & Integration**
 
-*MCP connector server*
+*MCP connector server – these files were meant for this sprint, so they are carried over from Sprint 1.*
 - [server.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/mcp/server.py) – MCP server entry point; installs missing dependencies and starts the server over stdio.
 - [tools.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/mcp/connectors/tools.py) – MCP tools for fetching applications, nodes, edges, health status, and CSV export.
 - [bluedolphin.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/mcp/connectors/sources/bluedolphin.py) – BlueDolphin REST client and parser.
@@ -103,15 +107,7 @@ NA
 - [tests/mcp](https://github.com/Tony2K3/quantum-ready-capstone/tree/main/code/backend/tests/mcp) – Validates parsing, normalization, merging, resilience, and export using mocked APIs.
 
 *Chat assistant*
-- [main.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/chat/app/main.py) – REST API for authentication, sessions, and messages; serves the chat UI.
-- [sessions.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/chat/app/sessions.py) – Session lifecycle, ownership checks, chat turns, and history summarization.
-- [auth.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/chat/app/auth.py) – User accounts with hashed passwords and bearer tokens.
-- [context.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/chat/app/context.py) – Fits conversation history into the model's context window.
-- [llm/](https://github.com/Tony2K3/quantum-ready-capstone/tree/main/code/backend/src/chat/app/llm) – Provider-agnostic LLM layer with OpenAI-compatible and Anthropic adapters.
-- [storage/](https://github.com/Tony2K3/quantum-ready-capstone/tree/main/code/backend/src/chat/app/storage) – PostgreSQL and SQLite storage backends behind one interface.
-- [README.md](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/chat/README.md) – Setup, API reference, configuration, and LLM provider documentation.
-- [test_chat.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/chat/test_chat.py) – Validates authentication, session lifecycle, context handling, and the REST API.
-- [test_llm.py](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/tests/chat/test_llm.py) – Validates LLM provider adapters and error handling.
+- [index.html](https://github.com/Tony2K3/quantum-ready-capstone/blob/main/code/backend/src/chat/static/index.html) – Single-page chat UI with sign-in/registration, a session sidebar, message thread, and light/dark themes.
 
 ## Retrospective Summary
 
@@ -129,7 +125,7 @@ NA
 - Simplify service setup and dependency management.
 
 **Russell:**
-
+- CI/CD research.
 
 ### Here's what we'd like to improve:
 
@@ -141,7 +137,7 @@ NA
 **Peter:**
 
 **Russell:**
-
+- Improve communication with Group 1.
 
 ### Here are changes we plan to implement in the next sprint:
 
@@ -155,5 +151,8 @@ NA
 
 
 **Russell:**
+- Finalize the MCP connector.
+- End-to-end testing.
+- Chat polish.
 
 
