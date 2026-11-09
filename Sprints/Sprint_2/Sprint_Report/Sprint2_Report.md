@@ -32,7 +32,7 @@ During Sprint 2, I implemented the core Simulation Engine using the existing QRO
 
 
 **Russell:**
-
+During sprint 2 I pushed the ui for the chat bot, most of my code for this sprint was done last sprint. Most of my time spent was doing research for sprint 3 as I will be tackling things I havent worked with before. 
 
 ## Unfinished Work
 
